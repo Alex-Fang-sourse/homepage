@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方新宇 · 双有理几何与模空间</title>
+<meta name="description" content="方新宇，中山大学数学学院（珠海）数学与应用数学本科生，2027 年起攻读基础数学博士，学习双有理几何及其在模空间中的应用。">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" id="themeColor">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="方新宇 · 双有理几何与模空间">
+<meta property="og:description" content="中山大学数学学院（珠海）本科生，2027 年起攻读基础数学博士，关注双有理几何与模空间。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='7' fill='%238b3a25'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='%23fdf6ec' font-family='serif'%3EF%3C/text%3E%3C/svg%3E">
+
+<!-- 在绘制前确定主题，避免闪烁 -->
+<script>
+(function () {
+  try {
+    var saved = localStorage.getItem('scholar-theme');
+    var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();
+</script>
+
+<style>
+/* ============================================================
+   1. 设计变量
+   ============================================================ */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --panel: #f7f6f3;
+  --ink: #141414;
+  --body: #3f3f3f;
+  --muted: #6b6b6b;
+  --line: #e6e3dd;
+  --line-strong: #cfcbc3;
+  --accent: #8b3a25;
+  --accent-2: #b25f3c;
+  --accent-soft: #f6ece6;
+  --on-accent: #fffaf4;
+  --header-h: 70px;
+  --shadow: 0 1px 2px rgba(20, 20, 20, .04), 0 18px 40px -24px rgba(20, 20, 20, .18);
+  --serif: "Iowan Old Style", "Palatino Linotype", "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", STSong, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+[data-theme="dark"] {
+  --bg: #131210;
+  --surface: #1b1916;
+  --ink: #f3ecdf;
+  --body: #cfc6b6;
+  --muted: #9c9282;
+  --line: #322d26;
+  --line-strong: #4a4238;
+  --accent: #e6a184;
+  --accent-2: #f0bb9d;
+  --accent-soft: #2b211a;
+  --on-accent: #1d1008;
+  --panel: #201d19;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 20px 44px -26px rgba(0, 0, 0, .8);
+}
+
+/* ============================================================
+   2. 基础
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 92px;
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+}
+html[data-theme="dark"] { color-scheme: dark; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--body);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+h1, h2, h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.18;
+  letter-spacing: -.012em;
+}
+p { margin: 0; }
+::selection { background: var(--accent); color: var(--on-accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+.wrap { width: min(1140px, calc(100% - 48px)); margin-inline: auto; }
+
+.skip-link {
+  position: fixed; left: 16px; top: -60px; z-index: 200;
+  padding: 10px 16px; background: var(--ink); color: var(--bg);
+  font-size: 13px; border-radius: 2px; transition: top .2s;
+}
+.skip-link:focus { top: 12px; }
+
+.grain {
+  position: fixed; inset: 0; z-index: 90; pointer-events: none;
+  opacity: .022; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .grain { opacity: .05; mix-blend-mode: screen; }
+
+/* ============================================================
+   3. 页头
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0; z-index: 60;
+  background: var(--bg);
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s, background .3s;
+}
+.site-header.is-stuck {
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  border-bottom-color: var(--line);
+}
+.header-inner { display: flex; align-items: center; gap: 22px; height: 70px; }
+
+.brand { display: flex; align-items: center; gap: 11px; margin-right: auto; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.12; }
+.brand-text strong {
+  font-family: var(--serif); font-size: 16px; font-weight: 600;
+  letter-spacing: .06em; color: var(--ink);
+}
+.brand-text span {
+  margin-top: 3px; font-family: var(--mono); font-size: 9px;
+  letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+}
+
+.nav { display: flex; align-items: center; gap: 1px; }
+.nav a {
+  position: relative; padding: 8px 13px; border-radius: 2px;
+  font-size: 13.5px; color: var(--body); transition: color .2s, background .2s;
+}
+.nav a::after {
+  content: ""; position: absolute; left: 13px; right: 13px; bottom: 4px;
+  height: 1px; background: var(--accent);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .28s cubic-bezier(.2, .7, .3, 1);
+}
+.nav a:hover { color: var(--accent); background: var(--accent-soft); }
+.nav a:hover::after, .nav a[aria-current="true"]::after { transform: scaleX(1); }
+.nav a[aria-current="true"] { color: var(--accent); font-weight: 600; }
+
+.header-actions { display: flex; align-items: center; gap: 7px; }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 34px; min-width: 34px; padding: 0 9px;
+  border: 1px solid var(--line); border-radius: 2px;
+  background: transparent; color: var(--body);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+  cursor: pointer; transition: color .2s, border-color .2s, background .2s;
+}
+.icon-btn:hover { color: var(--accent); border-color: var(--line-strong); background: var(--surface); }
+.icon-btn svg { width: 16px; height: 16px; }
+.theme-btn .icon-sun { display: none; }
+[data-theme="dark"] .theme-btn .icon-sun { display: block; }
+[data-theme="dark"] .theme-btn .icon-moon { display: none; }
+.menu-btn { display: none; }
+.menu-btn .icon-close { display: none; }
+body.nav-open .menu-btn .icon-menu { display: none; }
+body.nav-open .menu-btn .icon-close { display: block; }
+
+.progress {
+  position: absolute; left: 0; bottom: 0; z-index: 2;
+  width: 0; height: 2px; background: var(--accent);
+  transition: width .08s linear;
+}
+
+/* ============================================================
+   4. 首屏
+   ============================================================ */
+.hero {
+  position: relative; overflow: hidden;
+  padding: clamp(56px, 9vw, 108px) 0 clamp(48px, 6vw, 72px);
+}
+.hero::before {
+  content: ""; position: absolute; pointer-events: none;
+  top: -38%; right: -6%; width: min(760px, 78vw); height: 780px;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent 72%);
+  opacity: .55;
+}
+.hero-grid {
+  position: relative; display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(260px, .78fr);
+  gap: clamp(40px, 6vw, 86px); align-items: center;
+}
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  margin: 0 0 24px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.eyebrow::before { content: ""; width: 34px; height: 1px; flex: none; background: var(--accent); }
+.hero h1 {
+  margin: 0;
+  font-size: clamp(3rem, 6.4vw, 4.9rem);
+  font-weight: 600; line-height: 1; letter-spacing: .01em;
+}
+.name-en {
+  display: block; margin-top: 18px;
+  font-family: var(--mono); font-size: 11.5px; font-weight: 400;
+  letter-spacing: .34em; text-transform: uppercase; color: var(--muted);
+}
+.hero-role {
+  margin: 26px 0 0; font-size: 14.5px; font-weight: 600;
+  letter-spacing: .02em; color: var(--ink);
+}
+.hero-role span { color: var(--muted); font-weight: 400; }
+.hero-role span:first-child { color: var(--ink); font-weight: 600; }
+.hero-bio { margin: 16px 0 0; max-width: 56ch; font-size: 16.5px; line-height: 1.82; }
+.hero-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 30px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; padding: 0 18px;
+  border: 1px solid var(--accent); border-radius: 2px;
+  background: var(--accent); color: var(--on-accent);
+  font-size: 13.5px; font-weight: 600; letter-spacing: .01em;
+  transition: background .2s, border-color .2s, transform .2s, color .2s;
+}
+.btn:hover { background: var(--accent-2); border-color: var(--accent-2); transform: translateY(-1px); }
+.btn .arr { font-size: 12px; opacity: .85; }
+.btn-ghost { background: transparent; color: var(--body); border-color: var(--line); font-weight: 500; }
+.btn-ghost:hover { background: var(--surface); color: var(--accent); border-color: var(--line-strong); }
+
+.hero-media { justify-self: end; width: 100%; max-width: 356px; }
+.portrait-wrap { position: relative; margin: 0; isolation: isolate; }
+.portrait-wrap::before {
+  content: ""; position: absolute; z-index: -1;
+  inset: 16px -16px -16px 16px;
+  border: 1px solid var(--line-strong);
+}
+.portrait {
+  position: relative; width: 100%; aspect-ratio: 4 / 5;
+  overflow: hidden; border: 1px solid var(--line-strong); border-radius: 2px;
+  background: #e3cdb4; box-shadow: var(--shadow);
+}
+.portrait > svg { width: 100%; height: 100%; display: block; }
+.portrait img { width: 100%; height: 100%; display: block; object-fit: cover; }
+[data-theme="dark"] .portrait { filter: brightness(.9) saturate(.94); }
+.portrait-cap {
+  display: flex; justify-content: space-between; gap: 12px;
+  margin-top: 14px; font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--muted);
+}
+
+/* ============================================================
+   5. 通用区块
+   ============================================================ */
+.section { padding: clamp(54px, 8vw, 88px) 0; scroll-margin-top: 88px; }
+.section-head { max-width: 780px; margin-bottom: 44px; }
+.section-head .kicker { margin-bottom: 15px; }
+.section-head h2 { font-size: clamp(1.72rem, 3.2vw, 2.35rem); }
+.kicker {
+  display: inline-block; font-family: var(--mono); font-size: 10px;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--accent);
+}
+
+/* ============================================================
+   6. 研究卡片
+   ============================================================ */
+/* 研究陈述 */
+.research-statement {
+  max-width: 900px;
+  padding: 4px 0 4px clamp(20px, 4vw, 34px);
+  border-left: 2px solid var(--accent);
+}
+.research-statement p {
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2.3vw, 1.5rem);
+  line-height: 1.8;
+  color: var(--ink);
+}
+.research-statement p + p { margin-top: 10px; color: var(--body); }
+
+/* 空模块 */
+.section--compact { padding: clamp(36px, 5vw, 56px) 0; }
+.section--compact .section-head { margin-bottom: 24px; }
+.module-empty {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px;
+  padding: 24px 26px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+.empty-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--accent);
+}
+.module-empty p { font-size: 14px; color: var(--muted); }
+
+/* ============================================================
+   7. 讨论班 / 教育经历
+   ============================================================ */
+.seminar {
+  position: relative; max-width: 820px;
+  display: grid; grid-template-columns: 128px 1fr;
+  gap: clamp(18px, 3vw, 34px);
+  align-items: start;
+  padding: clamp(24px, 4vw, 34px);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+}
+.seminar::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent);
+}
+.seminar-when {
+  padding-top: 5px; font-family: var(--mono); font-size: 11px;
+  letter-spacing: .08em; color: var(--muted);
+}
+.seminar-body h3 { margin-bottom: 8px; font-size: 1.35rem; }
+.seminar-body { padding-right: 100px; }
+.seminar-body p { max-width: 72ch; font-size: 14px; line-height: 1.78; }
+.seminar-meta {
+  margin-top: 10px !important; font-size: 12.5px !important; color: var(--muted) !important;
+}
+.role {
+  padding: 2px 9px; border: 1px solid var(--accent-soft); border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  font-family: var(--mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.seminar .role { position: absolute; top: clamp(24px, 4vw, 34px); right: clamp(24px, 4vw, 34px); }
+
+.edu-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-strong); }
+.edu-row {
+  display: grid; grid-template-columns: 128px 1fr auto;
+  gap: clamp(18px, 3vw, 30px); align-items: start;
+  padding: 22px 0; border-bottom: 1px solid var(--line);
+}
+.edu-row .time {
+  padding-top: 4px; font-family: var(--mono); font-size: 11px;
+  letter-spacing: .06em; color: var(--muted);
+}
+.edu-row h3 { margin-bottom: 4px; font-size: 1.12rem; }
+.edu-row p { font-size: 13px; line-height: 1.62; color: var(--muted); }
+.edu-row .degree {
+  margin-top: 2px; padding: 3px 9px;
+  border: 1px solid var(--accent-soft); border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  font-family: var(--mono); font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase; white-space: nowrap;
+}
+
+/* ============================================================
+   8. 联系
+   ============================================================ */
+.contact-panel {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 1.05fr .95fr;
+  gap: clamp(28px, 5vw, 64px);
+  padding: clamp(28px, 5vw, 52px);
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 2px;
+}
+.contact-panel::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2) 42%, transparent 92%);
+}
+.contact h2 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); }
+.contact-lead { margin-top: 16px; max-width: 46ch; font-size: 14.6px; line-height: 1.8; color: var(--muted); }
+.email-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 24px; }
+.email-link {
+  font-family: var(--serif); font-size: clamp(1.08rem, 2.1vw, 1.42rem);
+  color: var(--ink); border-bottom: 1px solid var(--accent); padding-bottom: 2px;
+  transition: color .2s;
+}
+.email-link:hover { color: var(--accent); }
+.copy-btn {
+  padding: 5px 10px; border: 1px solid var(--line); border-radius: 2px;
+  background: transparent; color: var(--muted); font-size: 11px; cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--line-strong); }
+.contact-details {
+  display: grid; gap: 17px; align-content: start;
+  border-left: 1px solid var(--line); padding-left: clamp(24px, 4vw, 40px);
+}
+.detail-label {
+  display: block; margin-bottom: 2px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--muted);
+}
+.detail-value { font-size: 13.8px; line-height: 1.6; }
+.note-box {
+  margin-top: 6px; padding: 13px 15px;
+  background: var(--panel); border-left: 2px solid var(--accent);
+  font-size: 12.8px; line-height: 1.7; color: var(--muted);
+}
+
+/* ============================================================
+   9. 页脚 / 提示
+   ============================================================ */
+.site-footer { padding: 30px 0 38px; border-top: 1px solid var(--line); }
+.footer-inner {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 16px; font-size: 12px; color: var(--muted);
+}
+.footer-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
+}
+.footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+.footer-links a:hover { color: var(--accent); }
+
+.toast {
+  position: fixed; left: 50%; bottom: 28px; z-index: 120;
+  max-width: calc(100% - 32px); padding: 11px 18px;
+  background: var(--ink); color: var(--bg); border-radius: 3px;
+  font-size: 13px; text-align: center;
+  opacity: 0; transform: translate(-50%, 14px); pointer-events: none;
+  transition: opacity .3s, transform .3s;
+}
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+
+.js .reveal {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .75s cubic-bezier(.2, .7, .3, 1), transform .75s cubic-bezier(.2, .7, .3, 1);
+  transition-delay: var(--d, 0s);
+}
+.js .reveal.is-in { opacity: 1; transform: none; }
+
+/* ============================================================
+   10. 响应式
+   ============================================================ */
+@media (max-width: 980px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 46px; }
+  .hero-media { justify-self: start; max-width: 300px; }
+  .contact-panel { grid-template-columns: 1fr; }
+  .contact-details { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 24px; }
+}
+
+@media (max-width: 880px) {
+  .menu-btn { display: inline-flex; }
+  .nav {
+    position: absolute; left: 0; right: 0; top: 100%;
+    display: none; flex-direction: column; align-items: stretch; gap: 0;
+    padding: 6px 24px 18px;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    box-shadow: 0 24px 40px -30px rgba(0, 0, 0, .45);
+    max-height: calc(100vh - var(--header-h)); overflow-y: auto;
+  }
+  body.nav-open .nav { display: flex; }
+  body.nav-open::after {
+    content: ""; position: fixed; inset: var(--header-h) 0 0 0; z-index: 55;
+    background: rgba(26, 18, 10, .26);
+    -webkit-backdrop-filter: blur(1.5px); backdrop-filter: blur(1.5px);
+    animation: veil .2s ease-out;
+  }
+  [data-theme="dark"] body.nav-open::after { background: rgba(0, 0, 0, .55); }
+  @keyframes veil { from { opacity: 0; } to { opacity: 1; } }
+  .nav a { padding: 13px 2px; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .nav a:last-child { border-bottom: 0; }
+  .nav a::after { display: none; }
+  .nav a[aria-current="true"] { background: transparent; }
+}
+
+@media (max-width: 720px) {
+  :root { --header-h: 62px; }
+  body.nav-open .nav { padding-left: 20px; padding-right: 20px; }
+  .wrap { width: calc(100% - 40px); }
+  .header-inner { height: 62px; gap: 10px; }
+  .brand-text span { display: none; }
+  .seminar { grid-template-columns: 1fr; gap: 8px; }
+  .seminar-body { padding-right: 0; }
+  .seminar .role { position: static; justify-self: start; margin-top: 8px; }
+  .edu-row { grid-template-columns: 1fr auto; gap: 5px 14px; }
+  .edu-row .time { grid-column: 1; grid-row: 1; padding-top: 0; }
+  .edu-row .degree { grid-column: 2; grid-row: 1; justify-self: end; }
+  .edu-row .edu-body { grid-column: 1 / -1; grid-row: 2; }
+  .seminar-when { padding-top: 0; }
+  .section-head { margin-bottom: 34px; }
+}
+
+@media (max-width: 520px) {
+  .hero { padding-top: 44px; }
+  .hero h1 { font-size: 2.85rem; }
+  .hero-bio { font-size: 15.5px; }
+  .hero-links { gap: 7px; }
+  .hero-links .btn { flex: 1 1 0; min-width: 0; }
+  .section { padding: 54px 0; }
+  .contact-panel { padding: 26px 20px; }
+  .email-link { font-size: 1.02rem; }
+  .research-statement p { font-size: 1.12rem; }
+  .module-empty { padding: 20px; flex-direction: column; gap: 5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+/* ============================================================
+   11. 打印
+   ============================================================ */
+@media print {
+  html, body { background: #fff !important; color: #111 !important; font-size: 10.5pt; }
+  .site-header, .grain, .toast, .hero-links, .hero-media,
+  .copy-btn, .footer-links, .skip-link { display: none !important; }
+  .contact-panel, .seminar, .module-empty { background: #fff !important; }
+  .section { padding: 18px 0; break-inside: avoid; }
+  .hero { padding: 0 0 18px; }
+  .hero::before { display: none; }
+  .wrap { width: 100%; }
+  a { text-decoration: none; color: #111; }
+  .contact-panel { border: 1px solid #ccc; }
+  .js .reveal { opacity: 1 !important; transform: none !important; }
+}
+</style>
+</head>
+
+<body id="top">
+<a class="skip-link" href="#main">跳到主要内容 · Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ======================= 页头 ======================= -->
+<header class="site-header" id="siteHeader">
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <div class="wrap header-inner">
+    <a class="brand" href="#top" aria-label="方新宇 · 回到顶部">
+      <span class="brand-text">
+        <strong>方新宇</strong>
+        <span>Xinyu Fang</span>
+      </span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="主导航">
+      <a href="#about" data-zh="关于" data-en="About">关于</a>
+      <a href="#research" data-zh="研究" data-en="Research">研究</a>
+      <a href="#publications" data-zh="论文" data-en="Papers">论文</a>
+      <a href="#notes" data-zh="讲义" data-en="Notes">讲义</a>
+      <a href="#blog" data-zh="Blog" data-en="Blog">Blog</a>
+      <a href="#seminar" data-zh="讨论班" data-en="Seminar">讨论班</a>
+      <a href="#education" data-zh="经历" data-en="Education">经历</a>
+      <a href="#contact" data-zh="联系" data-en="Contact">联系</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn lang-btn" id="langBtn" type="button" aria-label="Switch to English">EN</button>
+      <button class="icon-btn theme-btn" id="themeBtn" type="button" aria-label="切换深色模式">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav" aria-label="打开菜单">
+        <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ======================= 首屏 ======================= -->
+  <section class="hero" id="about">
+    <div class="wrap hero-grid">
+      <div class="hero-copy reveal">
+        <p class="eyebrow" data-zh="中山大学 · 数学学院（珠海）" data-en="Sun Yat-sen University · School of Mathematics (Zhuhai)">中山大学 · 数学学院（珠海）</p>
+        <h1>方新宇</h1>
+        <span class="name-en">Xinyu Fang</span>
+        <p class="hero-role">
+          <span data-zh="数学与应用数学" data-en="Mathematics and Applied Mathematics">数学与应用数学</span>
+          <span aria-hidden="true">·</span>
+          <span data-zh="本科生（2023–2027）" data-en="BSc, 2023–2027">本科生（2023–2027）</span>
+        </p>
+        <p class="hero-bio" data-zh="我是中山大学数学学院（珠海）数学与应用数学专业 2023 级本科生，2027 年起将在中山大学数学学院攻读基础数学博士。" data-en="I am an undergraduate in Mathematics and Applied Mathematics at Sun Yat-sen University’s School of Mathematics (Zhuhai), class of 2027. From 2027 I will pursue a PhD in pure mathematics at Sun Yat-sen University.">我是中山大学数学学院（珠海）数学与应用数学专业 2023 级本科生，2027 年起将在中山大学数学学院攻读基础数学博士。</p>
+
+        <div class="hero-links">
+          <a class="btn" href="mailto:fangxy56@mail2.sysu.edu.cn">
+            <span data-zh="邮件联系" data-en="Email me">邮件联系</span>
+            <span class="arr" aria-hidden="true">↗</span>
+          </a>
+          <a class="btn btn-ghost" href="#research">
+            <span data-zh="研究方向" data-en="Research">研究方向</span>
+            <span class="arr" aria-hidden="true">↓</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-media reveal" style="--d:.12s">
+        <figure class="portrait-wrap">
+          <!-- 照片：直接替换 photo.jpg 即可（建议竖版 4:5，宽度 800px 以上） -->
+          <div class="portrait">
+            <img src="photo.jpg" alt="方新宇">
+          </div>
+          <figcaption class="portrait-cap">
+            <span data-zh="数学学院（珠海）" data-en="Mathematics (Zhuhai)">数学学院（珠海）</span>
+            <span>Portrait</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 研究 ======================= -->
+  <section class="section" id="research">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker" data-zh="01 — 研究" data-en="01 — Research">01 — 研究</span>
+        <h2 data-zh="研究方向" data-en="Research">研究方向</h2>
+      </div>
+
+      <div class="research-statement reveal">
+        <p data-zh="主要研究方向是双有理几何及其在模空间中的应用。" data-en="My main research interest is birational geometry and its applications to moduli spaces.">主要研究方向是双有理几何及其在模空间中的应用。</p>
+        <p data-zh="同时我也对数论与算术几何有浓厚的兴趣。" data-en="I am also strongly interested in number theory and arithmetic geometry.">同时我也对数论与算术几何有浓厚的兴趣。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 论文发表 ======================= -->
+  <section class="section section--compact" id="publications">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker" data-zh="02 — 论文" data-en="02 — Papers">02 — 论文</span>
+        <h2 data-zh="论文发表" data-en="Publications">论文发表</h2>
+      </div>
+      <div class="module-empty reveal">
+        <span class="empty-label" data-zh="内容整理中" data-en="Coming soon">内容整理中</span>
+        <p data-zh="论文与预印本将在这里更新。" data-en="Papers and preprints will appear here.">论文与预印本将在这里更新。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 讲义 ======================= -->
+  <section class="section section--compact" id="notes">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker" data-zh="03 — 讲义" data-en="03 — Notes">03 — 讲义</span>
+        <h2 data-zh="讲义" data-en="Notes">讲义</h2>
+      </div>
+      <div class="module-empty reveal">
+        <span class="empty-label" data-zh="内容整理中" data-en="Coming soon">内容整理中</span>
+        <p data-zh="讨论班讲义、读书笔记将在这里更新。" data-en="Seminar notes and reading notes will appear here.">讨论班讲义、读书笔记将在这里更新。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Blog ======================= -->
+  <section class="section section--compact" id="blog">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker" data-zh="04 — Blog" data-en="04 — Blog">04 — Blog</span>
+        <h2 data-zh="Blog" data-en="Blog">Blog</h2>
+      </div>
+      <div class="module-empty reveal">
+        <span class="empty-label" data-zh="内容整理中" data-en="Coming soon">内容整理中</span>
+        <p data-zh="随笔、读书笔记与阶段性想法将在这里更新。" data-en="Essays, reading notes, and occasional thoughts will appear here.">随笔、读书笔记与阶段性想法将在这里更新。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 讨论班 ======================= -->
+  <section class="section" id="seminar">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker" data-zh="05 — 讨论班" data-en="05 — Seminar">05 — 讨论班</span>
+        <h2 data-zh="讨论班" data-en="Seminar">讨论班</h2>
+      </div>
+
+      <div class="seminar reveal">
+        <div class="seminar-when" data-zh="2026 春季" data-en="Spring 2026">2026 春季</div>
+        <div class="seminar-body">
+          <h3 data-zh="代数几何讨论班" data-en="Algebraic Geometry Seminar">代数几何讨论班</h3>
+          <p class="seminar-meta" data-zh="中山大学数学学院（珠海）" data-en="School of Mathematics (Zhuhai), Sun Yat-sen University">中山大学数学学院（珠海）</p>
+        </div>
+        <span class="role" data-zh="组织者" data-en="Organizer">组织者</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 教育经历 ======================= -->
+  <section class="section" id="education">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker" data-zh="06 — 经历" data-en="06 — Education">06 — 经历</span>
+        <h2 data-zh="教育经历" data-en="Education">教育经历</h2>
+      </div>
+
+      <ul class="edu-list reveal">
+        <li class="edu-row">
+          <span class="time" data-zh="2027 —" data-en="2027 —">2027 —</span>
+          <div class="edu-body">
+            <h3 data-zh="基础数学" data-en="Pure Mathematics">基础数学</h3>
+            <p data-zh="中山大学数学学院 · 研究方向：双有理几何与模空间" data-en="School of Mathematics, Sun Yat-sen University · Research: birational geometry and moduli spaces">中山大学数学学院 · 研究方向：双有理几何与模空间</p>
+          </div>
+          <span class="degree" data-zh="博士研究生（2027 级）" data-en="PhD, 2027 cohort">博士研究生（2027 级）</span>
+        </li>
+        <li class="edu-row">
+          <span class="time" data-zh="2023 — 2027" data-en="2023 — 2027">2023 — 2027</span>
+          <div class="edu-body">
+            <h3 data-zh="数学与应用数学" data-en="Mathematics and Applied Mathematics">数学与应用数学</h3>
+            <p data-zh="中山大学数学学院（珠海）" data-en="School of Mathematics (Zhuhai), Sun Yat-sen University">中山大学数学学院（珠海）</p>
+          </div>
+          <span class="degree" data-zh="本科" data-en="BSc">本科</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======================= 联系 ======================= -->
+  <section class="section" id="contact">
+    <div class="wrap">
+      <div class="contact-panel reveal">
+        <div>
+          <span class="kicker" data-zh="07 — 联系" data-en="07 — Contact">07 — 联系</span>
+          <h2 style="margin-top:14px" data-zh="欢迎交流" data-en="Get in touch">欢迎交流</h2>
+          <p class="contact-lead" data-zh="如果你对双有理几何、模空间或代数几何感兴趣，欢迎写信交流。" data-en="If you are interested in birational geometry, moduli spaces, or algebraic geometry more broadly, I would be glad to hear from you.">如果你对双有理几何、模空间或代数几何感兴趣，欢迎写信交流。</p>
+          <div class="email-row">
+            <a class="email-link" href="mailto:fangxy56@mail2.sysu.edu.cn">fangxy56@mail2.sysu.edu.cn</a>
+            <button class="copy-btn" id="copyEmail" type="button" data-email="fangxy56@mail2.sysu.edu.cn">
+              <span data-zh="复制邮箱" data-en="Copy">复制邮箱</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="contact-details">
+          <div>
+            <span class="detail-label" data-zh="工位" data-en="Desk">工位</span>
+            <p class="detail-value" data-zh="中山大学海琴二号" data-en="Haiqin Building No. 2, Sun Yat-sen University">中山大学海琴二号</p>
+          </div>
+          <div>
+            <span class="detail-label" data-zh="地址" data-en="Address">地址</span>
+            <p class="detail-value" data-zh="广东省珠海市香洲区唐家湾镇大学路 2 号 中山大学珠海校区，519082" data-en="Sun Yat-sen University Zhuhai Campus, 2 Daxue Road, Tangjiawan, Xiangzhou District, Zhuhai, Guangdong 519082">广东省珠海市香洲区唐家湾镇大学路 2 号 中山大学珠海校区，519082</p>
+          </div>
+          <div>
+            <span class="detail-label" data-zh="身份" data-en="Affiliation">身份</span>
+            <p class="detail-value" data-zh="中山大学数学学院（珠海）· 本科生" data-en="School of Mathematics (Zhuhai), Sun Yat-sen University · BSc">中山大学数学学院（珠海）· 本科生</p>
+          </div>
+          <p class="note-box" data-zh="工位暂定海琴二号，具体房间待定；欢迎邮件预约。" data-en="My desk is currently at Haiqin Building No. 2; the room number is to be confirmed. Please email in advance.">工位暂定海琴二号，具体房间待定；欢迎邮件预约。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ======================= 页脚 ======================= -->
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <span class="footer-brand">
+      <span data-zh="© 2026 方新宇" data-en="© 2026 Xinyu Fang">© 2026 方新宇</span>
+    </span>
+    <div class="footer-links">
+      <a href="mailto:fangxy56@mail2.sysu.edu.cn" data-zh="邮箱" data-en="Email">邮箱</a>
+      <a href="#top" data-zh="回到顶部 ↑" data-en="Back to top ↑">回到顶部 ↑</a>
+    </div>
+    <span data-zh="最后更新：2026 年 11 月" data-en="Last updated November 2026">最后更新：2026 年 11 月</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var root = document.documentElement;
+  var body = document.body;
+  var LANG_KEY = 'scholar-lang';
+  var THEME_KEY = 'scholar-theme';
+  var lang = 'zh';
+
+  try { lang = localStorage.getItem(LANG_KEY) || 'zh'; } catch (e) {}
+  root.classList.add('js');
+
+  /* ---------- 主题 ---------- */
+  var themeBtn = document.getElementById('themeBtn');
+  var themeColor = document.getElementById('themeColor');
+
+  function syncTheme() {
+    var isDark = root.getAttribute('data-theme') === 'dark';
+    themeBtn.setAttribute('aria-label', lang === 'zh'
+      ? (isDark ? '切换浅色模式' : '切换深色模式')
+      : (isDark ? 'Switch to light mode' : 'Switch to dark mode'));
+    themeColor.setAttribute('content', isDark ? '#131210' : '#ffffff');
+  }
+
+  themeBtn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+    syncTheme();
+  });
+
+  /* ---------- 语言 ---------- */
+  var langBtn = document.getElementById('langBtn');
+  var metaDesc = document.querySelector('meta[name="description"]');
+  var META = {
+    zh: {
+      title: '方新宇 · 双有理几何与模空间',
+      desc: '方新宇，中山大学数学学院（珠海）数学与应用数学本科生，2027 年起攻读基础数学博士，学习双有理几何及其在模空间中的应用。'
+    },
+    en: {
+      title: 'Xinyu Fang · Birational Geometry and Moduli Spaces',
+      desc: 'Xinyu Fang is an undergraduate in mathematics at Sun Yat-sen University (Zhuhai), starting a PhD in pure mathematics in 2027, interested in birational geometry and moduli spaces.'
+    }
+  };
+
+  function applyLang(next) {
+    lang = next === 'en' ? 'en' : 'zh';
+    root.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+    body.setAttribute('data-lang', lang);
+
+    document.querySelectorAll('[data-zh]').forEach(function (el) {
+      var value = el.getAttribute('data-' + lang);
+      if (value != null) el.textContent = value;
+    });
+
+    langBtn.textContent = lang === 'zh' ? 'EN' : '中文';
+    langBtn.setAttribute('lang', lang === 'zh' ? 'en' : 'zh-CN');
+    langBtn.setAttribute('aria-label', lang === 'zh' ? 'Switch to English' : '切换到中文');
+
+    document.title = META[lang].title;
+    if (metaDesc) metaDesc.setAttribute('content', META[lang].desc);
+
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+    syncTheme();
+    updateActiveNav();
+  }
+
+  langBtn.addEventListener('click', function () {
+    applyLang(lang === 'zh' ? 'en' : 'zh');
+  });
+
+  /* ---------- 移动端菜单 ---------- */
+  var menuBtn = document.getElementById('menuBtn');
+  var nav = document.getElementById('nav');
+
+  function closeMenu() {
+    body.classList.remove('nav-open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.setAttribute('aria-label', lang === 'zh' ? '打开菜单' : 'Open menu');
+  }
+
+  menuBtn.addEventListener('click', function () {
+    var open = body.classList.toggle('nav-open');
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open
+      ? (lang === 'zh' ? '关闭菜单' : 'Close menu')
+      : (lang === 'zh' ? '打开菜单' : 'Open menu'));
+  });
+
+  nav.addEventListener('click', function (e) {
+    if (e.target.closest('a')) closeMenu();
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!body.classList.contains('nav-open')) return;
+    if (nav.contains(e.target) || menuBtn.contains(e.target)) return;
+    closeMenu();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && body.classList.contains('nav-open')) {
+      closeMenu();
+      menuBtn.focus();
+    }
+  });
+
+  /* ---------- 滚动：进度、吸顶、当前章节 ---------- */
+  var header = document.getElementById('siteHeader');
+  var progress = document.getElementById('progress');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  var navLinks = Array.prototype.slice.call(nav.querySelectorAll('a'));
+  var ticking = false;
+
+  function updateActiveNav() {
+    var y = window.scrollY + 130;
+    var current = sections.length ? sections[0].id : '';
+    sections.forEach(function (section) {
+      if (section.offsetTop <= y) current = section.id;
+    });
+    navLinks.forEach(function (link) {
+      if (link.getAttribute('href') === '#' + current) {
+        link.setAttribute('aria-current', 'true');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function onScroll() {
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    var ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    progress.style.width = (ratio * 100) + '%';
+    header.classList.toggle('is-stuck', window.scrollY > 6);
+    updateActiveNav();
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(onScroll);
+    }
+  }, { passive: true });
+
+  /* ---------- 出现动画 ---------- */
+  var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-in'); });
+  }
+
+  /* ---------- 提示条 ---------- */
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+
+  function showToast(message) {
+    toastEl.textContent = message;
+    toastEl.classList.add('is-on');
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(function () {
+      toastEl.classList.remove('is-on');
+    }, 2800);
+  }
+
+  /* ---------- 复制邮箱 ---------- */
+  var copyBtn = document.getElementById('copyEmail');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      var email = copyBtn.getAttribute('data-email');
+      var done = function () {
+        showToast(lang === 'zh' ? '邮箱已复制：' + email : 'Email copied: ' + email);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(done).catch(function () {
+          window.prompt(lang === 'zh' ? '复制邮箱：' : 'Copy email:', email);
+        });
+      } else {
+        var temp = document.createElement('textarea');
+        temp.value = email;
+        temp.setAttribute('readonly', '');
+        temp.style.position = 'fixed';
+        temp.style.opacity = '0';
+        body.appendChild(temp);
+        temp.select();
+        try { document.execCommand('copy'); done(); } catch (err) { window.prompt('Copy email:', email); }
+        body.removeChild(temp);
+      }
+    });
+  }
+
+  /* ---------- 初始化 ---------- */
+  applyLang(lang);
+  syncTheme();
+  onScroll();
+  window.addEventListener('resize', function () {
+    updateActiveNav();
+    if (window.innerWidth > 880) closeMenu();
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>

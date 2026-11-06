@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>方新宇 · 双有理几何与模空间</title>
+<title>欢迎来到八的五次方的个人主页！</title>
 <meta name="description" content="方新宇，中山大学数学学院（珠海）数学与应用数学本科生，2027 年起攻读基础数学博士，学习双有理几何及其在模空间中的应用。">
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#ffffff" id="themeColor">
 <meta property="og:type" content="profile">
-<meta property="og:title" content="方新宇 · 双有理几何与模空间">
+<meta property="og:title" content="欢迎来到八的五次方的个人主页！">
 <meta property="og:description" content="中山大学数学学院（珠海）本科生，2027 年起攻读基础数学博士，关注双有理几何与模空间。">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='7' fill='%238b3a25'/%3E%3Ctext x='32' y='45' font-size='38' text-anchor='middle' fill='%23fdf6ec' font-family='serif'%3EF%3C/text%3E%3C/svg%3E">
 
@@ -361,6 +361,61 @@ body.nav-open .menu-btn .icon-close { display: block; }
   font-family: var(--mono); font-size: 9px; letter-spacing: .08em;
   text-transform: uppercase; white-space: nowrap;
 }
+.edu-row a.degree {
+  display: inline-flex; align-items: center;
+  padding: 5px 11px; font-size: 9.5px;
+  background: var(--accent); border-color: var(--accent); color: var(--on-accent);
+  transition: background .2s, border-color .2s, color .2s;
+}
+.edu-row a.degree:hover { background: var(--accent-2); border-color: var(--accent-2); color: var(--on-accent); }
+
+/* Blog */
+.post { max-width: 820px; padding-top: 22px; border-top: 1px solid var(--line-strong); }
+.post-summary {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
+  cursor: pointer; list-style: none;
+}
+.post-summary::-webkit-details-marker { display: none; }
+.post-summary::marker { content: ""; }
+.post-heading { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.post-meta {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+  color: var(--muted); text-transform: uppercase;
+}
+.post-tag {
+  padding: 2px 9px; border: 1px solid var(--accent-soft); border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  font-family: var(--sans); font-size: 10.5px; letter-spacing: .02em;
+  text-transform: none;
+}
+.post-lang { font-family: var(--sans); font-size: 10.5px; letter-spacing: .02em; text-transform: none; color: var(--muted); }
+.post-title {
+  font-family: var(--serif); font-size: clamp(1.3rem, 2.5vw, 1.6rem);
+  font-weight: 600; line-height: 1.35; color: var(--ink); letter-spacing: -.01em;
+  transition: color .2s;
+}
+.post-summary:hover .post-title { color: var(--accent); }
+.post-toggle {
+  position: relative; flex: none; width: 30px; height: 30px; margin-top: 2px;
+  border: 1px solid var(--line); border-radius: 50%;
+  transition: border-color .2s, background .2s;
+}
+.post-toggle::before, .post-toggle::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  background: var(--accent); transform: translate(-50%, -50%);
+}
+.post-toggle::before { width: 10px; height: 1px; }
+.post-toggle::after { width: 1px; height: 10px; transition: transform .2s; }
+.post[open] .post-toggle { border-color: var(--accent); background: var(--accent-soft); }
+.post[open] .post-toggle::after { transform: translate(-50%, -50%) scaleY(0); }
+.post-body { max-width: 68ch; padding-top: 18px; }
+.post-body p { font-size: 15.5px; line-height: 1.95; color: var(--body); }
+.post-body p + p { margin-top: 14px; }
+.post-end {
+  margin-top: 22px; color: var(--muted);
+  font-family: var(--mono); font-size: 10px; letter-spacing: .3em;
+}
 
 /* ============================================================
    8. 联系
@@ -648,10 +703,16 @@ body.nav-open .menu-btn .icon-close { display: block; }
         <span class="kicker" data-zh="03 — 讲义" data-en="03 — Notes">03 — 讲义</span>
         <h2 data-zh="讲义" data-en="Notes">讲义</h2>
       </div>
-      <div class="module-empty reveal">
-        <span class="empty-label" data-zh="内容整理中" data-en="Coming soon">内容整理中</span>
-        <p data-zh="讨论班讲义、读书笔记将在这里更新。" data-en="Seminar notes and reading notes will appear here.">讨论班讲义、读书笔记将在这里更新。</p>
-      </div>
+      <ul class="edu-list reveal">
+        <li class="edu-row">
+          <span class="time" data-zh="2026.11" data-en="Nov 2026">2026.11</span>
+          <div class="edu-body">
+            <h3 data-zh="有限域 Roth 定理的几何语言版本" data-en="The Finite Field Roth Theorem: A Geometric Language Version">有限域 Roth 定理的几何语言版本</h3>
+            <p data-zh="线性纤维化、计数测度与仿射旗 · 讲义" data-en="Linear fibrations, counting measures, and affine flags · Notes">线性纤维化、计数测度与仿射旗 · 讲义</p>
+          </div>
+          <a class="degree" href="finite_field_roth_AG_notes.pdf" target="_blank" rel="noopener">PDF ↗</a>
+        </li>
+      </ul>
     </div>
   </section>
 
@@ -662,10 +723,27 @@ body.nav-open .menu-btn .icon-close { display: block; }
         <span class="kicker" data-zh="04 — Blog" data-en="04 — Blog">04 — Blog</span>
         <h2 data-zh="Blog" data-en="Blog">Blog</h2>
       </div>
-      <div class="module-empty reveal">
-        <span class="empty-label" data-zh="内容整理中" data-en="Coming soon">内容整理中</span>
-        <p data-zh="随笔、读书笔记与阶段性想法将在这里更新。" data-en="Essays, reading notes, and occasional thoughts will appear here.">随笔、读书笔记与阶段性想法将在这里更新。</p>
-      </div>
+      <details class="post reveal" lang="zh-CN">
+        <summary class="post-summary">
+          <span class="post-heading">
+            <span class="post-meta">
+              <time datetime="2026-11-06">2026.11.6</time>
+              <span class="post-tag">#发疯日常</span>
+              <span class="post-lang" data-zh="中文" data-en="In Chinese">中文</span>
+            </span>
+            <span class="post-title" role="heading" aria-level="3">发疯日常（2026.11.6）</span>
+          </span>
+          <span class="post-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="post-body">
+          <p>今天是真的发疯日常，也是嘉豪日常，也是民科日常。我这人谈不上学得有多好，但有时候尤其是点了瑞幸之后总有一些乱七八糟不靠谱的想法，但给我一些震撼。</p>
+          <p>事情是这样的，今天数论课上张老师讲了有限域上的 Kakeya 猜想的解决，我就在思考能不能把 Kakeya 问题再推广，我想能不能在一些特殊的模结构上也找到 Kakeya 猜想，然后和 AI 交流的过程中发现还真有。尤其是居然就在近几年 p-adic 数域这个算术对象上有了重大进展，甚至 Z/NZ 这种结构也有类似的结果，有点兴奋。</p>
+          <p>那我也提个不靠谱的想法，能不能在 Adele 环或者代数簇上也构建类似于 Kakeya 集以及 Kakeya 猜想的结论 🤔（我真外行，民科来的随便说的）</p>
+          <p>然后今天课上张老师和其他同学也在提能不能把“武士刀”换成固定形状的“弯刀”或者“鞭子”，感觉这个事情也挺有意思。</p>
+          <p>不知道以后有没有机会再思考一下。</p>
+        </div>
+        <p class="post-end" aria-hidden="true">· · ·</p>
+      </details>
     </div>
   </section>
 
@@ -724,7 +802,7 @@ body.nav-open .menu-btn .icon-close { display: block; }
         <div>
           <span class="kicker" data-zh="07 — 联系" data-en="07 — Contact">07 — 联系</span>
           <h2 style="margin-top:14px" data-zh="欢迎交流" data-en="Get in touch">欢迎交流</h2>
-          <p class="contact-lead" data-zh="如果你对双有理几何、模空间或代数几何感兴趣，欢迎写信交流。" data-en="If you are interested in birational geometry, moduli spaces, or algebraic geometry more broadly, I would be glad to hear from you.">如果你对双有理几何、模空间或代数几何感兴趣，欢迎写信交流。</p>
+          <p class="contact-lead" data-zh="在交流中学数学总是兴奋的，如果你对代数几何或者数论感兴趣，欢迎写信交流！" data-en="I always get excited about learning mathematics through conversation. If you are interested in algebraic geometry or number theory, I would be glad to hear from you.">在交流中学数学总是兴奋的，如果你对代数几何或者数论感兴趣，欢迎写信交流！</p>
           <div class="email-row">
             <a class="email-link" href="mailto:fangxy56@mail2.sysu.edu.cn">fangxy56@mail2.sysu.edu.cn</a>
             <button class="copy-btn" id="copyEmail" type="button" data-email="fangxy56@mail2.sysu.edu.cn">
@@ -764,7 +842,7 @@ body.nav-open .menu-btn .icon-close { display: block; }
       <a href="mailto:fangxy56@mail2.sysu.edu.cn" data-zh="邮箱" data-en="Email">邮箱</a>
       <a href="#top" data-zh="回到顶部 ↑" data-en="Back to top ↑">回到顶部 ↑</a>
     </div>
-    <span data-zh="最后更新：2026 年 11 月" data-en="Last updated November 2026">最后更新：2026 年 11 月</span>
+    <span data-zh="最后更新：2026 年 11 月 6 日" data-en="Last updated November 6, 2026">最后更新：2026 年 11 月 6 日</span>
   </div>
 </footer>
 
@@ -807,11 +885,11 @@ body.nav-open .menu-btn .icon-close { display: block; }
   var metaDesc = document.querySelector('meta[name="description"]');
   var META = {
     zh: {
-      title: '方新宇 · 双有理几何与模空间',
+      title: '欢迎来到八的五次方的个人主页！',
       desc: '方新宇，中山大学数学学院（珠海）数学与应用数学本科生，2027 年起攻读基础数学博士，学习双有理几何及其在模空间中的应用。'
     },
     en: {
-      title: 'Xinyu Fang · Birational Geometry and Moduli Spaces',
+      title: 'Welcome to the homepage of 八的五次方!',
       desc: 'Xinyu Fang is an undergraduate in mathematics at Sun Yat-sen University (Zhuhai), starting a PhD in pure mathematics in 2027, interested in birational geometry and moduli spaces.'
     }
   };
